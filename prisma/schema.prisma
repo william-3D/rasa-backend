@@ -13,3 +13,92 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id               Int             @id @default(autoincrement())
+  email            String             @unique
+  passwordHash     String
+  fullName         String
+  username         String             @unique
+  profilePicture   String? // S3 file URL
+  region           String?
+  conditions       UserCondition[]
+  allergies        UserAllergy[]
+  favorites        FavoriteRecipe[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+model Condition {
+  id        Int                 @id @default(autoincrement())
+  name      String              @unique // e.g. "Diabetes", "GERD", "Celiac"
+  users     UserCondition[]
+  recipes   RecipeCondition[]
+}
+
+model UserCondition {
+  userId        Int
+  conditionId   Int
+  user          User        @relation(fields: [userId], references: [id])
+  condition     Condition   @relation(fields: [conditionId], references: [id])
+
+  @@id([userId, conditionId])
+}
+
+model Allergy {
+  id        Int               @id @default(autoincrement())
+  name      String            @unique // e.g. "Nuts", "Dairy", "Shellfish"
+  users     UserAllergy[]     @relation("UserAllergies")
+  recipes   RecipeAllergy[]
+}
+
+model UserAllergy {
+  userId      Int
+  allergyId   Int
+  user        User      @relation(fields: [userId], references: [id])
+  allergy     Allergy   @relation("UserAllergies", fields: [allergyId], references: [id])
+
+  @@id([userId, allergyId])
+}
+
+model Recipe {
+  id              Int                 @id @default(autoincrement())
+  title           String
+  description     String?
+  sourceUrl       String?
+  ingredients     Json               // [{name: "egg", amount: "2", unit: "pcs"}]
+  steps           Json               // ["Step 1...", "Step 2..."]
+  nutritionInfo   Json?              // {calories: 200, carbs: 30, fat: 5}
+  region          String?            // Default region (e.g., "US")
+  conditions      RecipeCondition[]
+  allergies       RecipeAllergy[]
+  favorites       FavoriteRecipe[]
+  createdAt       DateTime            @default(now())
+}
+
+model RecipeCondition {
+  recipeId      Int
+  conditionId   Int
+  recipe        Recipe      @relation(fields: [recipeId], references: [id])
+  condition     Condition   @relation(fields: [conditionId], references: [id])
+
+  @@id([recipeId, conditionId])
+}
+
+model RecipeAllergy {
+  recipeId    Int
+  allergyId   Int
+  recipe      Recipe    @relation(fields: [recipeId], references: [id])
+  allergy     Allergy   @relation(fields: [allergyId], references: [id])
+
+  @@id([recipeId, allergyId])
+}
+
+model FavoriteRecipe {
+  userId     Int
+  recipeId   Int
+  user       User     @relation(fields: [userId], references: [id])
+  recipe     Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@id([userId, recipeId])
+}
