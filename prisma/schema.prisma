@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -15,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id               Int             @id @default(autoincrement())
+  id               String          @id @default(cuid())
   email            String             @unique
   passwordHash     String
   fullName         String
@@ -30,15 +29,15 @@ model User {
 }
 
 model Condition {
-  id        Int                 @id @default(autoincrement())
+  id        String              @id @default(cuid())
   name      String              @unique // e.g. "Diabetes", "GERD", "Celiac"
   users     UserCondition[]
   recipes   RecipeCondition[]
 }
 
 model UserCondition {
-  userId        Int
-  conditionId   Int
+  userId        String
+  conditionId   String
   user          User        @relation(fields: [userId], references: [id])
   condition     Condition   @relation(fields: [conditionId], references: [id])
 
@@ -46,15 +45,15 @@ model UserCondition {
 }
 
 model Allergy {
-  id        Int               @id @default(autoincrement())
+  id        String            @id @default(cuid())
   name      String            @unique // e.g. "Nuts", "Dairy", "Shellfish"
   users     UserAllergy[]     @relation("UserAllergies")
   recipes   RecipeAllergy[]
 }
 
 model UserAllergy {
-  userId      Int
-  allergyId   Int
+  userId      String
+  allergyId   String
   user        User      @relation(fields: [userId], references: [id])
   allergy     Allergy   @relation("UserAllergies", fields: [allergyId], references: [id])
 
@@ -62,7 +61,7 @@ model UserAllergy {
 }
 
 model Recipe {
-  id              Int                 @id @default(autoincrement())
+  id              String              @id @default(cuid())
   title           String
   description     String?
   sourceUrl       String?
@@ -77,8 +76,8 @@ model Recipe {
 }
 
 model RecipeCondition {
-  recipeId      Int
-  conditionId   Int
+  recipeId      String
+  conditionId   String
   recipe        Recipe      @relation(fields: [recipeId], references: [id])
   condition     Condition   @relation(fields: [conditionId], references: [id])
 
@@ -86,8 +85,8 @@ model RecipeCondition {
 }
 
 model RecipeAllergy {
-  recipeId    Int
-  allergyId   Int
+  recipeId    String
+  allergyId   String
   recipe      Recipe    @relation(fields: [recipeId], references: [id])
   allergy     Allergy   @relation(fields: [allergyId], references: [id])
 
@@ -95,8 +94,8 @@ model RecipeAllergy {
 }
 
 model FavoriteRecipe {
-  userId     Int
-  recipeId   Int
+  userId     String
+  recipeId   String
   user       User     @relation(fields: [userId], references: [id])
   recipe     Recipe   @relation(fields: [recipeId], references: [id])
 
