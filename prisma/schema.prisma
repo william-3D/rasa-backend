@@ -64,6 +64,7 @@ model Recipe {
   id              String              @id @default(cuid())
   title           String
   description     String?
+  imageUrl        String?
   sourceUrl       String?
   ingredients     Json               // [{name: "egg", amount: "2", unit: "pcs"}]
   steps           Json               // ["Step 1...", "Step 2..."]
