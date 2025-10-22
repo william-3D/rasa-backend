@@ -10,7 +10,13 @@ import { ScraperModule } from './scraper/scraper.module';
 
 @Module({
   imports: [
-    ScheduleModule.forRoot(),ProfileModule, ConditionsModule, AllergiesModule, RecipesModule, ScraperModule],
+    ScheduleModule.forRoot(),
+    ProfileModule,
+    ConditionsModule,
+    AllergiesModule,
+    RecipesModule,
+    ScraperModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
