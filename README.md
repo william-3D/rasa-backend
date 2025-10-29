@@ -23,7 +23,114 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Rasa Backend - A NestJS API for personalized recipe discovery that filters recipes based on user dietary needs, health conditions, and allergies.
+
+## Tech Stack
+
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL (Supabase)
+- **ORM**: Prisma
+- **Package Manager**: pnpm
+
+## Features
+
+- Recipe search and pagination
+- Filter by region, health conditions, and allergies
+- User-specific filtering (excludes recipes with user's allergens)
+- Dynamic filter options from database
+
+## API Endpoints
+
+### GET /recipes
+Fetch recipes with optional filters
+
+**Query Parameters:**
+- `search` - Search by recipe title or description
+- `userId` - Filter out recipes containing user's allergens
+- `region` - Filter by cuisine region (can be multiple)
+- `condition` - Filter by health condition (can be multiple)
+- `allergy` - Filter by allergen presence (can be multiple)
+- `page` - Page number (default: 1)
+- `limit` - Items per page (default: 12)
+
+**Response:**
+```json
+{
+  "recipes": [...],
+  "total": 28,
+  "page": 1,
+  "totalPages": 3
+}
+```
+
+### GET /recipes/filters
+Get available filter options
+
+**Response:**
+```json
+{
+  "regions": ["American", "Chinese", "Indian", ...],
+  "conditions": ["Diabetes", "GERD", "Celiac", ...],
+  "allergies": ["Nuts", "Dairy", "Gluten", ...]
+}
+```
+
+## Database Schema
+
+**Key Models:**
+- `Recipe` - Recipe details with ingredients, steps, nutrition info
+- `User` - User profile with region, conditions, and allergies
+- `Condition` - Health conditions (Diabetes, GERD, etc.)
+- `Allergy` - Food allergens (Nuts, Dairy, etc.)
+- `RecipeCondition` - Links recipes suitable for conditions
+- `RecipeAllergy` - Links recipes containing allergens
+
+## API Call Flow
+
+### Recipe Fetching Flow
+```
+Client Request → RecipesController.findAll() → RecipesService.findAll() → Prisma Query → Database
+```
+
+**Detailed Steps:**
+1. **Controller** receives HTTP request with query parameters
+2. **Controller** converts string/array parameters and passes to service
+3. **Service** builds Prisma `where` clause:
+   - Adds search filter (title/description contains)
+   - Adds region filter (exact match)
+   - Adds condition filter (recipes linked to conditions)
+   - Adds allergy filter (recipes containing allergens)
+   - If `userId` provided: fetches user data and excludes recipes with user's allergens
+4. **Prisma** executes query with pagination (skip/take)
+5. **Service** returns recipes with pagination metadata
+6. **Controller** sends JSON response to client
+
+### Filter Options Flow
+```
+Client Request → RecipesController.getFilters() → RecipesService.getFilters() → Prisma Query → Database
+```
+
+**Detailed Steps:**
+1. **Controller** receives GET request to `/recipes/filters`
+2. **Service** executes 3 parallel queries:
+   - Fetch distinct regions from Recipe table
+   - Fetch all condition names from Condition table
+   - Fetch all allergy names from Allergy table
+3. **Service** formats and sorts results
+4. **Controller** sends JSON response with available filter options
+
+## Important Behavior
+
+When `userId` is provided, the API automatically filters out recipes containing the user's allergens for safety. This reduces the total recipe count but ensures user safety.
+
+## Seeding Data
+
+To populate conditions and allergies:
+
+```bash
+pnpm ts-node prisma/seed-conditions-allergies.ts
+```
 
 ## Project setup
 
