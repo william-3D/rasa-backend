@@ -87,6 +87,13 @@ export class ProfileService {
     return this.getProfile(userId);
   }
 
+  // TODO: Have you thought about implementing a cleanup of old profile pictures
+  // When a user updates their profile picture, we should:
+  // 1. Delete the previous image from S3 bucket
+  // 2. Upload the new image
+  // 3. Update the database reference
+  // This prevents accumulation of unused images in storage
+  
   async uploadProfilePicture(userId: string, file: Express.Multer.File) {
     const key = await this.s3Service.uploadFile(file, userId);
     await this.prisma.user.update({

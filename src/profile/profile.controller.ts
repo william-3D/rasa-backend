@@ -12,6 +12,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
+// TODO: Are you planning to create a User controller as well? Especially to handle the creation a new users or deletion as well
+
+// Consider separating user management operations (create/delete) into a dedicated UserController
+// The ProfileController should focus on profile-specific operations, while user management should be handled separately
+// This separation will provide clearer boundaries even though both controllers interact with the User model
+
 @Controller('profile')
 export class ProfileController {
   constructor(private profileService: ProfileService) {}

@@ -5,6 +5,7 @@ import { ConditionsService } from './conditions.service';
 export class ConditionsController {
   constructor(private conditionsService: ConditionsService) {}
 
+  // TODO: SUPPORT ALL @POST @PATCH @DELETE
   @Get()
   getAllConditions() {
     return this.conditionsService.getAllConditions();
