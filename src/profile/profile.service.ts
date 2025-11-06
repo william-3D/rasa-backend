@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { S3Service } from '../s3/s3.service';
 
 @Injectable()
 export class ProfileService {
+  private readonly logger = new Logger(ProfileService.name);
+
   constructor(
     private prisma: PrismaService,
     private s3Service: S3Service,
@@ -31,7 +33,9 @@ export class ProfileService {
 
     let profilePictureUrl = user.profilePicture;
     if (user.profilePicture) {
-      profilePictureUrl = await this.s3Service.getSignedUrl(user.profilePicture);
+      profilePictureUrl = await this.s3Service.getSignedUrl(
+        user.profilePicture,
+      );
     }
 
     return {
@@ -87,15 +91,20 @@ export class ProfileService {
     return this.getProfile(userId);
   }
 
-  // TODO: Have you thought about implementing a cleanup of old profile pictures
-  // When a user updates their profile picture, we should:
-  // 1. Delete the previous image from S3 bucket
-  // 2. Upload the new image
-  // 3. Update the database reference
-  // This prevents accumulation of unused images in storage
-  
   async uploadProfilePicture(userId: string, file: Express.Multer.File) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { profilePicture: true },
+    });
+
+    if (user?.profilePicture) {
+      this.logger.log(`Deleting old profile picture: ${user.profilePicture}`);
+      await this.s3Service.deleteFile(user.profilePicture);
+      this.logger.log('Old profile picture deleted successfully');
+    }
+
     const key = await this.s3Service.uploadFile(file, userId);
+    this.logger.log(`New profile picture uploaded: ${key}`);
     await this.prisma.user.update({
       where: { id: userId },
       data: { profilePicture: key },
