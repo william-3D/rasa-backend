@@ -8,6 +8,8 @@ import {
   Param,
 } from '@nestjs/common';
 import { AllergiesService } from './allergies.service';
+import { CreateAllergyDto } from './dto/create-allergy.dto';
+import { UpdateAllergyDto } from './dto/update-allergy.dto';
 
 @Controller('allergies')
 export class AllergiesController {
@@ -19,13 +21,13 @@ export class AllergiesController {
   }
 
   @Post()
-  createAllergy(@Body('name') name: string) {
-    return this.allergiesService.createAllergy(name);
+  createAllergy(@Body() dto: CreateAllergyDto) {
+    return this.allergiesService.createAllergy(dto);
   }
 
   @Patch(':id')
-  updateAllergy(@Param('id') id: string, @Body('name') name: string) {
-    return this.allergiesService.updateAllergy(id, name);
+  updateAllergy(@Param('id') id: string, @Body() dto: UpdateAllergyDto) {
+    return this.allergiesService.updateAllergy(id, dto);
   }
 
   @Delete(':id')
