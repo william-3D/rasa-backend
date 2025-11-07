@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateConditionsDto } from './dto/update-conditions.dto';
+import { UpdateAllergiesDto } from './dto/update-allergies.dto';
 import { S3Service } from '../s3/s3.service';
 
 @Injectable()
@@ -61,13 +63,13 @@ export class ProfileService {
     });
   }
 
-  async updateConditions(userId: string, conditionIds: string[]) {
+  async updateConditions(userId: string, dto: UpdateConditionsDto) {
     await this.prisma.userCondition.deleteMany({
       where: { userId },
     });
 
     await this.prisma.userCondition.createMany({
-      data: conditionIds.map((conditionId) => ({
+      data: dto.conditionIds.map((conditionId) => ({
         userId,
         conditionId,
       })),
@@ -76,13 +78,13 @@ export class ProfileService {
     return this.getProfile(userId);
   }
 
-  async updateAllergies(userId: string, allergyIds: string[]) {
+  async updateAllergies(userId: string, dto: UpdateAllergiesDto) {
     await this.prisma.userAllergy.deleteMany({
       where: { userId },
     });
 
     await this.prisma.userAllergy.createMany({
-      data: allergyIds.map((allergyId) => ({
+      data: dto.allergyIds.map((allergyId) => ({
         userId,
         allergyId,
       })),

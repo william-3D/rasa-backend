@@ -3,10 +3,26 @@ import { Cron } from '@nestjs/schedule';
 import { PrismaService } from '../prisma.service';
 import axios from 'axios';
 import https from 'https';
+import { ScrapeRecipesDto } from './dto/scrape-recipes.dto';
 
 const axiosInstance = axios.create({
-  httpsAgent: new https.Agent({ rejectUnauthorized: false })
+  httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 });
+
+interface MealDbMeal {
+  strMeal: string;
+  strCategory: string;
+  strArea: string;
+  strInstructions: string;
+  strMealThumb: string;
+  strSource: string;
+  strYoutube: string;
+  [key: string]: string;
+}
+
+interface MealDbResponse {
+  meals: MealDbMeal[] | null;
+}
 
 @Injectable()
 export class ScraperService implements OnModuleInit {
@@ -16,21 +32,21 @@ export class ScraperService implements OnModuleInit {
     const count = await this.prisma.recipe.count();
     if (count < 100) {
       console.log('Scraping initial recipes...');
-      await this.scrapeRecipes('chicken');
-      await this.scrapeRecipes('pasta');
-      await this.scrapeRecipes('vegetarian');
+      await this.scrapeRecipes({ query: 'chicken' });
+      await this.scrapeRecipes({ query: 'pasta' });
+      await this.scrapeRecipes({ query: 'vegetarian' });
     }
   }
 
   @Cron('0 0 * * 0')
   async weeklyUpdate() {
     console.log('Running weekly recipe update...');
-    await this.scrapeRecipes('healthy');
+    await this.scrapeRecipes({ query: 'healthy' });
   }
 
-  async scrapeRecipes(query: string = 'chicken') {
-    const response = await axiosInstance.get(
-      `https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`
+  async scrapeRecipes(dto: ScrapeRecipesDto) {
+    const response = await axiosInstance.get<MealDbResponse>(
+      `https://www.themealdb.com/api/json/v1/1/search.php?s=${dto.query}`,
     );
 
     const meals = response.data.meals || [];
@@ -42,7 +58,11 @@ export class ScraperService implements OnModuleInit {
         const ingredient = meal[`strIngredient${i}`];
         const measure = meal[`strMeasure${i}`];
         if (ingredient && ingredient.trim()) {
-          ingredients.push({ name: ingredient, amount: measure || '', unit: '' });
+          ingredients.push({
+            name: ingredient,
+            amount: measure || '',
+            unit: '',
+          });
         }
       }
 

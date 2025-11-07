@@ -27,21 +27,21 @@ export class FindAllRecipesDto {
     ({ value }) => (Array.isArray(value) ? value : [value]) as string[],
   )
   @IsString({ each: true })
-  region?: string[];
+  regions?: string[];
 
   @IsOptional()
   @Transform(
     ({ value }) => (Array.isArray(value) ? value : [value]) as string[],
   )
   @IsString({ each: true })
-  condition?: string[];
+  conditions?: string[];
 
   @IsOptional()
   @Transform(
     ({ value }) => (Array.isArray(value) ? value : [value]) as string[],
   )
   @IsString({ each: true })
-  allergy?: string[];
+  allergies?: string[];
 
   @IsOptional()
   @Transform(({ value }) => value === 'true' || value === true)
