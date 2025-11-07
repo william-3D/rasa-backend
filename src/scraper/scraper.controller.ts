@@ -8,6 +8,6 @@ export class ScraperController {
 
   @Post('recipes')
   scrapeRecipes(@Query() dto: ScrapeRecipesDto) {
-    return this.scraperService.scrapeRecipes(dto.query);
+    return this.scraperService.scrapeRecipes(dto);
   }
 }

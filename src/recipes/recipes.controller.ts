@@ -18,15 +18,6 @@ export class RecipesController {
 
   @Get()
   findAll(@Query() dto: FindAllRecipesDto) {
-    return this.recipesService.findAll(
-      dto.search,
-      dto.userId,
-      dto.page,
-      dto.limit,
-      dto.region,
-      dto.condition,
-      dto.allergy,
-      dto.useUserFilters,
-    );
+    return this.recipesService.findAll(dto);
   }
 }

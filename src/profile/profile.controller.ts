@@ -32,9 +32,9 @@ export class ProfileController {
   @Patch(':userId')
   updateProfile(
     @Param('userId') userId: string,
-    @Body() updateProfileDto: UpdateProfileDto,
+    @Body() dto: UpdateProfileDto,
   ) {
-    return this.profileService.updateProfile(userId, updateProfileDto);
+    return this.profileService.updateProfile(userId, dto);
   }
 
   @Patch(':userId/conditions')
@@ -42,7 +42,7 @@ export class ProfileController {
     @Param('userId') userId: string,
     @Body() dto: UpdateConditionsDto,
   ) {
-    return this.profileService.updateConditions(userId, dto.conditionIds);
+    return this.profileService.updateConditions(userId, dto);
   }
 
   @Patch(':userId/allergies')
@@ -50,7 +50,7 @@ export class ProfileController {
     @Param('userId') userId: string,
     @Body() dto: UpdateAllergiesDto,
   ) {
-    return this.profileService.updateAllergies(userId, dto.allergyIds);
+    return this.profileService.updateAllergies(userId, dto);
   }
 
   @Post(':userId/profile-picture')
