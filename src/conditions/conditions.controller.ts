@@ -1,5 +1,15 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+} from '@nestjs/common';
 import { ConditionsService } from './conditions.service';
+import { CreateConditionDto } from './dto/create-condition.dto';
+import { UpdateConditionDto } from './dto/update-condition.dto';
 
 @Controller('conditions')
 export class ConditionsController {
@@ -11,13 +21,13 @@ export class ConditionsController {
   }
 
   @Post()
-  createCondition(@Body('name') name: string) {
-    return this.conditionsService.createCondition(name);
+  createCondition(@Body() dto: CreateConditionDto) {
+    return this.conditionsService.createCondition(dto.name);
   }
 
   @Patch(':id')
-  updateCondition(@Param('id') id: string, @Body('name') name: string) {
-    return this.conditionsService.updateCondition(id, name);
+  updateCondition(@Param('id') id: string, @Body() dto: UpdateConditionDto) {
+    return this.conditionsService.updateCondition(id, dto.name);
   }
 
   @Delete(':id')

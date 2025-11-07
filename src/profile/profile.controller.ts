@@ -11,6 +11,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from './profile.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { UpdateConditionsDto } from './dto/update-conditions.dto';
+import { UpdateAllergiesDto } from './dto/update-allergies.dto';
 
 // TODO: Are you planning to create a User controller as well? Especially to handle the creation a new users or deletion as well
 
@@ -38,17 +40,17 @@ export class ProfileController {
   @Patch(':userId/conditions')
   updateConditions(
     @Param('userId') userId: string,
-    @Body() body: { conditionIds: string[] },
+    @Body() dto: UpdateConditionsDto,
   ) {
-    return this.profileService.updateConditions(userId, body.conditionIds);
+    return this.profileService.updateConditions(userId, dto.conditionIds);
   }
 
   @Patch(':userId/allergies')
   updateAllergies(
     @Param('userId') userId: string,
-    @Body() body: { allergyIds: string[] },
+    @Body() dto: UpdateAllergiesDto,
   ) {
-    return this.profileService.updateAllergies(userId, body.allergyIds);
+    return this.profileService.updateAllergies(userId, dto.allergyIds);
   }
 
   @Post(':userId/profile-picture')
