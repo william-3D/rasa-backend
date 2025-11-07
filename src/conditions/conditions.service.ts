@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { CreateConditionDto } from './dto/create-condition.dto';
+import { UpdateConditionDto } from './dto/update-condition.dto';
 
 @Injectable()
 export class ConditionsService {
@@ -14,16 +16,16 @@ export class ConditionsService {
     });
   }
 
-  async createCondition(name: string) {
+  async createCondition(dto: CreateConditionDto) {
     return this.prisma.condition.create({
-      data: { name },
+      data: dto,
     });
   }
 
-  async updateCondition(id: string, name: string) {
+  async updateCondition(id: string, dto: UpdateConditionDto) {
     return this.prisma.condition.update({
       where: { id },
-      data: { name },
+      data: dto,
     });
   }
 

@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
+import { CreateAllergyDto } from './dto/create-allergy.dto';
+import { UpdateAllergyDto } from './dto/update-allergy.dto';
 
 @Injectable()
 export class AllergiesService {
@@ -14,16 +16,16 @@ export class AllergiesService {
     });
   }
 
-  async createAllergy(name: string) {
+  async createAllergy(dto: CreateAllergyDto) {
     return this.prisma.allergy.create({
-      data: { name },
+      data: dto,
     });
   }
 
-  async updateAllergy(id: string, name: string) {
+  async updateAllergy(id: string, dto: UpdateAllergyDto) {
     return this.prisma.allergy.update({
       where: { id },
-      data: { name },
+      data: dto,
     });
   }
 

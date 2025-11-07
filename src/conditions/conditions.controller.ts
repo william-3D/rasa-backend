@@ -22,12 +22,12 @@ export class ConditionsController {
 
   @Post()
   createCondition(@Body() dto: CreateConditionDto) {
-    return this.conditionsService.createCondition(dto.name);
+    return this.conditionsService.createCondition(dto);
   }
 
   @Patch(':id')
   updateCondition(@Param('id') id: string, @Body() dto: UpdateConditionDto) {
-    return this.conditionsService.updateCondition(id, dto.name);
+    return this.conditionsService.updateCondition(id, dto);
   }
 
   @Delete(':id')

@@ -1,7 +1,3 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { CreateConditionDto } from './create-condition.dto';
 
-export class UpdateConditionDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-}
+export class UpdateConditionDto extends CreateConditionDto {}

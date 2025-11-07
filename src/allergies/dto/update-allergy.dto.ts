@@ -1,7 +1,3 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { CreateAllergyDto } from './create-allergy.dto';
 
-export class UpdateAllergyDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-}
+export class UpdateAllergyDto extends CreateAllergyDto {}

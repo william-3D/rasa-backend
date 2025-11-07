@@ -22,12 +22,12 @@ export class AllergiesController {
 
   @Post()
   createAllergy(@Body() dto: CreateAllergyDto) {
-    return this.allergiesService.createAllergy(dto.name);
+    return this.allergiesService.createAllergy(dto);
   }
 
   @Patch(':id')
   updateAllergy(@Param('id') id: string, @Body() dto: UpdateAllergyDto) {
-    return this.allergiesService.updateAllergy(id, dto.name);
+    return this.allergiesService.updateAllergy(id, dto);
   }
 
   @Delete(':id')
