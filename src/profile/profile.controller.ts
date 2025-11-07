@@ -32,9 +32,9 @@ export class ProfileController {
   @Patch(':userId')
   updateProfile(
     @Param('userId') userId: string,
-    @Body() updateProfileDto: UpdateProfileDto,
+    @Body() dto: UpdateProfileDto,
   ) {
-    return this.profileService.updateProfile(userId, updateProfileDto);
+    return this.profileService.updateProfile(userId, dto);
   }
 
   @Patch(':userId/conditions')
